@@ -77,6 +77,30 @@ foreach $title (@songs) {
 print "File parsed. Bigram model built.\n\n";
 
 
+
+print matchesAny('anasdf')];
+
+sub matchesAny {
+	my $str = $_[0];
+
+	foreach $term ('a', 'an', 'and', 'by', 'for', 'from', 'in', 'of', 'on', 'or', 'out', 'the', 'to', 'with') {
+		if(matches($str, $term)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+sub matches {
+	my $str = $_[0];
+	my $match = @_[1];
+
+	return $str =~ m/^$match$/;
+}
+
+
+
 # User control loop
 print "Enter a word [Enter 'q' to quit]: ";
 $input = <STDIN>;
