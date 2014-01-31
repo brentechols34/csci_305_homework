@@ -51,6 +51,9 @@ while($line = <INFILE>) {
 		#Strip out the dang new line
 		$token =~ s/\n//e;
 
+		#filter out stupid words
+		$token =~ s/\b(a|an|and|by|for|from|in|of|on|or|out|the|to)\b\s*//g;
+
 		#Add it to the list of songs
 		push(@songs, $token);
 	}
@@ -78,14 +81,25 @@ foreach (@songs) {
 }
 print "File parsed. Bigram model built.\n\n";
 
-
 # User control loop
 print "Enter a word [Enter 'q' to quit]: ";
 $input = <STDIN>;
 chomp($input);
 while ($input ne "q"){
 	# Replace these lines with some useful code
-	print "most common word after $input is " . mcw($input) . "\n";
+	my @title = ();
+	my $current = $input;
+	for (my $i = 0; $i<20; $i++) {
+		@title[$i] = $current;
+		$current = mcw($current);
+		if ($current eq '') {
+			last;
+		}
+	}
+	foreach $word (@title) {
+		print $word." ";
+	}
+	print "\n";
 	print "Enter a word [Enter 'q' to quit]: ";
 	$input = <STDIN>;
 	chomp($input);
@@ -133,7 +147,7 @@ sub mcw {
 	keys %hash; # reset the internal iterator so a prior each() doesn't affect the loop
 	foreach (keys %bigram) {
 		$tie_breaker = rand();
-		if (($bigram{$word}{$_} > $best_val) || ($bigram{$word}{$_} > $best_val && $tie_breaker > .5)) {	
+		if (($bigram{$word}{$_} > $best_val) || ($bigram{$word}{$_} == $best_val && $tie_breaker > .5 && $best_val != 0)) {	
 			$best = $_;
 			$best_val = $bigram{$word}{$_};
 		}
