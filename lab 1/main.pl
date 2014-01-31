@@ -1,14 +1,16 @@
 ######################################### 	
 #    CSCI 305 - Programming Lab #1		
 #										
-#  < Replace with your Name >			
-#  < Replace with your Email >			
+#  Brent Echols
+#  brentechols34@yahoo.com		
 #										
 #########################################
 
 # Replace the string value of the following variable with your names.
 my $name = "Brent Echols";
 my $partner = "Alex Huleatt";
+
+
 print "CSCI 305 Lab 1 submitted by $name and $partner.\n\n";
 
 # Checks for the argument, fail if none given
@@ -39,15 +41,17 @@ while($line = <INFILE>) {
 	#eliminate punctuation
 	$token =~ s/[^\w\s]//g;
 
-	#eliminate non english Text
+	#eliminate non english songs
 	if($token =~ m/^([A-Z]|[a-z]|[0-9]| )+$/) {
 		
 
 		#Make lower case
 		$token =~ s/(.*)/lc($1)/e;
 
-		#print "$token";
+		#Strip out the dang new line
+		$token =~ s/\n//e;
 
+		#Add it to the list of songs
 		push(@songs, $token);
 	}
 }
@@ -72,30 +76,31 @@ foreach (@songs) {
 		$first = $second;
 	}
 }
-
-sub mcw {
-	my $word = @_[0];
-	#my %bigram = %{@_[1]};
-	$best = '';
-	$best_val = 0;
-	keys %hash; # reset the internal iterator so a prior each() doesn't affect the loop
-	foreach (keys %bigram) {
-		if ($bigram{$word}{$_} > $best_val) {	
-			$best = $_;
-			$best_val = $bigram{$word}{$_};
-		}
-	}
-	return $best;
-}
-
-$mcw = mcw("love", \%bigram);
-print "Most common word after love is $mcw \n";
 print "File parsed. Bigram model built.\n\n";
 
 
+# User control loop
+print "Enter a word [Enter 'q' to quit]: ";
+$input = <STDIN>;
+chomp($input);
+while ($input ne "q"){
+	# Replace these lines with some useful code
+	print "most common word after $input is " . mcw($input, \%bigram) . "\n";
+	print "Enter a word [Enter 'q' to quit]: ";
+	$input = <STDIN>;
+	chomp($input);
+}
 
-#print matchesAny('anasdf')];
 
+##########################################################################
+#
+#  FUNCTIONS
+#
+##########################################################################
+
+#
+# function for detecting if a character matches the list of 'stop' words
+#
 sub matchesAny {
 	my $str = $_[0];
 
@@ -108,6 +113,9 @@ sub matchesAny {
 	return false;
 }
 
+#
+# function for determining if the string matches the specified match
+#
 sub matches {
 	my $str = $_[0];
 	my $match = @_[1];
@@ -115,17 +123,21 @@ sub matches {
 	return $str =~ m/^$match$/;
 }
 
-
-
-# User control loop
-print "Enter a word [Enter 'q' to quit]: ";
-$input = <STDIN>;
-chomp($input);
-print "\n";	
-while ($input ne "q"){
-	# Replace these lines with some useful code
-	print "Not yet implemented.  Goodbye.\n";
-	$input = 'q';
+#
+# function for finding the most common word for the specified word
+#
+sub mcw {
+	my $word = @_[0];
+	my %bigram = %{@_[1]};
+	$best = '';
+	$best_val = 0;
+	keys %hash; # reset the internal iterator so a prior each() doesn't affect the loop
+	foreach (keys %bigram) {
+		if ($bigram{$word}{$_} > $best_val) {	
+			$best = $_;
+			$best_val = $bigram{$word}{$_};
+		}
+	}
+	return $best;
 }
 
-# MORE OF YOUR CODE HERE....
