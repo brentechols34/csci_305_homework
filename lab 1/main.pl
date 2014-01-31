@@ -23,16 +23,21 @@ open(INFILE, $ARGV[0]) or die "Cannot open $ARGV[0]: $!.\n";
 
 # YOUR VARIABLE DEFINITIONS HERE...
 
+$extractTitle = s/$needToReplace/$replacementText/g;
+$eliminateText = s/$needToReplace/$replacementText/g;
+$eliminatePunctuation = s/$needToReplace/$replacementText/g;
+$filterNonEnglish = s/$needToReplace/$replacementText/g;
+$makeLower = s/.*/\L&/g;
+
 # This loops through each line of the file
 @songs = ();
 while($line = <INFILE>) {
+	$token = $line;
+	$token =~ tr/A-Z/a-z/g;
 
-	#$token = $line.split('<sep>',)
+	print "$token";
 
-	# This prints each line. You will not want to keep this line.
-	#print $line;
-
-	# YOUR CODE BELOW...
+	push(@coins, $token);
 }
 
 # Close the file handle
