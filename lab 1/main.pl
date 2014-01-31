@@ -75,7 +75,7 @@ foreach (@songs) {
 
 sub mcw {
 	my $word = @_[0];
-	my %bigram = %{@_[1]};
+	#my %bigram = %{@_[1]};
 	$best = '';
 	$best_val = 0;
 	keys %hash; # reset the internal iterator so a prior each() doesn't affect the loop
@@ -88,13 +88,13 @@ sub mcw {
 	return $best;
 }
 
-$mcw = mcw("sad", \%bigram);
-print "Most common word after happy is $mcw \n";
+$mcw = mcw("love", \%bigram);
+print "Most common word after love is $mcw \n";
 print "File parsed. Bigram model built.\n\n";
 
 
 
-print matchesAny('anasdf')];
+#print matchesAny('anasdf')];
 
 sub matchesAny {
 	my $str = $_[0];
