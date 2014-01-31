@@ -67,13 +67,13 @@ close INFILE;
 
 %bigram;
 foreach (@songs) {
-	@name_split = split(" ", $_);
+	@name_split = split(/ /, $_);
 	$first = "";
-	foreach $second (@name_split) {
-		if ($first ne "") {
-			$bigram{$first}{$second} = $bigram{$first}{$second} + 1;
-		}
-		$first = $second;
+	$arr_length = scalar @name_split;
+	for (my $i = 1; $i < $arr_length; $i++) {
+		my $first = @name_split[$i-1];
+		my $second = @name_split[$i];
+		$bigram{$first}{$second} = $bigram{$first}{$second} + 1;
 	}
 }
 print "File parsed. Bigram model built.\n\n";
@@ -85,7 +85,7 @@ $input = <STDIN>;
 chomp($input);
 while ($input ne "q"){
 	# Replace these lines with some useful code
-	print "most common word after $input is " . mcw($input, \%bigram) . "\n";
+	print "most common word after $input is " . mcw($input) . "\n";
 	print "Enter a word [Enter 'q' to quit]: ";
 	$input = <STDIN>;
 	chomp($input);
@@ -128,12 +128,12 @@ sub matches {
 #
 sub mcw {
 	my $word = @_[0];
-	my %bigram = %{@_[1]};
 	$best = '';
 	$best_val = 0;
 	keys %hash; # reset the internal iterator so a prior each() doesn't affect the loop
 	foreach (keys %bigram) {
-		if ($bigram{$word}{$_} > $best_val) {	
+		$tie_breaker = rand();
+		if (($bigram{$word}{$_} > $best_val) || ($bigram{$word}{$_} > $best_val && $tie_breaker > .5)) {	
 			$best = $_;
 			$best_val = $bigram{$word}{$_};
 		}
