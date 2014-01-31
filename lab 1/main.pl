@@ -23,21 +23,26 @@ open(INFILE, $ARGV[0]) or die "Cannot open $ARGV[0]: $!.\n";
 
 # YOUR VARIABLE DEFINITIONS HERE...
 
-$extractTitle = s/$needToReplace/$replacementText/g;
-$eliminateText = s/$needToReplace/$replacementText/g;
-$eliminatePunctuation = s/$needToReplace/$replacementText/g;
-$filterNonEnglish = s/$needToReplace/$replacementText/g;
-$makeLower = s/.*/\L&/g;
-
 # This loops through each line of the file
 @songs = ();
 while($line = <INFILE>) {
 	$token = $line;
-	$token =~ tr/A-Z/a-z/g;
 
-	print "$token";
+	#get rid of the first part
+	$token =~ s/(.*<SEP>)//e;
 
-	push(@coins, $token);
+	#eliminate non english Text
+	if($token =~ m/(\W*)/) {
+		#eliminate punctuation
+		$token =~ s/(\W*)//e;
+
+		#Make lower case
+		$token =~ s/(.*)/lc($1)/e;
+
+		print "$token";
+
+		push(@coins, $token);
+	}
 }
 
 # Close the file handle
@@ -45,6 +50,22 @@ close INFILE;
 
 # At this point (hopefully) you will have finished processing the song 
 # title file and have populated your data structure of bigram counts.
+
+
+%bigram;
+foreach $title ($songs) {
+	@name_split = split($title);
+	$first = "";
+	foreach $second ($name_split) {
+		if ($first ne "") {
+			$bigram{$first}{$second}++;
+			print("$first $second");
+		}
+		$first = $second;
+	}
+}
+
+
 print "File parsed. Bigram model built.\n\n";
 
 
