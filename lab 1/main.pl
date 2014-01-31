@@ -10,7 +10,6 @@
 my $name = "Brent Echols";
 my $partner = "Alex Huleatt";
 
-my $STOP_WORDS = ('a', 'an', 'and', 'by', 'for', 'from', 'in', 'of', 'on', 'or', 'out', 'the', 'to', 'with');
 
 print "CSCI 305 Lab 1 submitted by $name and $partner.\n\n";
 
@@ -57,7 +56,7 @@ while($line = <INFILE>) {
 	}
 }
 
-print "\n\n";
+#print "\n\n";
 
 # Close the file handle
 close INFILE; 
@@ -67,8 +66,8 @@ close INFILE;
 
 
 %bigram;
-foreach $title (@songs) {
-	@name_split = split(" ", $title);
+foreach (@songs) {
+	@name_split = split(" ", $_);
 	$first = "";
 	foreach $second (@name_split) {
 		if ($first ne "") {
@@ -80,17 +79,18 @@ foreach $title (@songs) {
 print "File parsed. Bigram model built.\n\n";
 
 
+
 # User control loop
 print "Enter a word [Enter 'q' to quit]: ";
 $input = <STDIN>;
 chomp($input);
-print "\n";	
 while ($input ne "q"){
 	# Replace these lines with some useful code
-	print "Not yet implemented.  Goodbye.\n";
-	$input = 'q';
+	print "most common word after $input is " . mcw($input, \%bigram) . "\n";
+	print "Enter a word [Enter 'q' to quit]: ";
+	$input = <STDIN>;
+	chomp($input);
 }
-
 
 
 ##########################################################################
@@ -105,7 +105,7 @@ while ($input ne "q"){
 sub matchesAny {
 	my $str = $_[0];
 
-	foreach $term $_[1] {
+	foreach $term ('a', 'an', 'and', 'by', 'for', 'from', 'in', 'of', 'on', 'or', 'out', 'the', 'to', 'with') {
 		if(matches($str, $term)) {
 			return true;
 		}
@@ -123,3 +123,22 @@ sub matches {
 
 	return $str =~ m/^$match$/;
 }
+
+#
+# function for finding the most common word for the specified word
+#
+sub mcw {
+	my $word = @_[0];
+	my %bigram = %{@_[1]};
+	$best = '';
+	$best_val = 0;
+	keys %hash; # reset the internal iterator so a prior each() doesn't affect the loop
+	foreach (keys %bigram) {
+		if ($bigram{$word}{$_} > $best_val) {	
+			$best = $_;
+			$best_val = $bigram{$word}{$_};
+		}
+	}
+	return $best;
+}
+
