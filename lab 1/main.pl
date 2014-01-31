@@ -31,19 +31,28 @@ while($line = <INFILE>) {
 	#get rid of the first part
 	$token =~ s/(.*<SEP>)//e;
 
+	#get rid of extra annotations on the last part
+	$token =~ s/\[.*\]|\(.*\)//e;
+	$token =~ s/([\(\[{\\\/\_\-\:\"‘+=\*]|feat\.).*$//e;
+
+
+	#eliminate punctuation
+	$token =~ s/[^\w\s]//g;
+
 	#eliminate non english Text
-	if($token =~ m/(\W*)/) {
-		#eliminate punctuation
-		$token =~ s/(\W*)//e;
+	if($token =~ m/^([A-Z]|[a-z]|[0-9]| )+$/) {
+		
 
 		#Make lower case
 		$token =~ s/(.*)/lc($1)/e;
 
 		print "$token";
 
-		push(@coins, $token);
+		push(@songs, $token);
 	}
 }
+
+print "\n\n";
 
 # Close the file handle
 close INFILE; 
@@ -53,13 +62,12 @@ close INFILE;
 
 
 %bigram;
-foreach $title ($songs) {
-	@name_split = split($title);
+foreach $title (@songs) {
+	@name_split = split(" ", $title);
 	$first = "";
-	foreach $second ($name_split) {
+	foreach $second (@name_split) {
 		if ($first ne "") {
-			$bigram{$first}{$second}++;
-			print("$first $second");
+			$bigram{$first}{$second} = $bigram{$first}{$second} + 1;
 		}
 		$first = $second;
 	}
