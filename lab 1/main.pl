@@ -1,14 +1,17 @@
 ######################################### 	
 #    CSCI 305 - Programming Lab #1		
 #										
-#  < Replace with your Name >			
-#  < Replace with your Email >			
+#  Brent Echols
+#  brentechols34@yahoo.com		
 #										
 #########################################
 
 # Replace the string value of the following variable with your names.
 my $name = "Brent Echols";
 my $partner = "Alex Huleatt";
+
+my $STOP_WORDS = ('a', 'an', 'and', 'by', 'for', 'from', 'in', 'of', 'on', 'or', 'out', 'the', 'to', 'with');
+
 print "CSCI 305 Lab 1 submitted by $name and $partner.\n\n";
 
 # Checks for the argument, fail if none given
@@ -39,15 +42,17 @@ while($line = <INFILE>) {
 	#eliminate punctuation
 	$token =~ s/[^\w\s]//g;
 
-	#eliminate non english Text
+	#eliminate non english songs
 	if($token =~ m/^([A-Z]|[a-z]|[0-9]| )+$/) {
 		
 
 		#Make lower case
 		$token =~ s/(.*)/lc($1)/e;
 
-		print "$token";
+		#Strip out the dang new line
+		$token =~ s/\n//e;
 
+		#Add it to the list of songs
 		push(@songs, $token);
 	}
 }
@@ -72,33 +77,7 @@ foreach $title (@songs) {
 		$first = $second;
 	}
 }
-
-
 print "File parsed. Bigram model built.\n\n";
-
-
-
-print matchesAny('anasdf')];
-
-sub matchesAny {
-	my $str = $_[0];
-
-	foreach $term ('a', 'an', 'and', 'by', 'for', 'from', 'in', 'of', 'on', 'or', 'out', 'the', 'to', 'with') {
-		if(matches($str, $term)) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-sub matches {
-	my $str = $_[0];
-	my $match = @_[1];
-
-	return $str =~ m/^$match$/;
-}
-
 
 
 # User control loop
@@ -112,4 +91,35 @@ while ($input ne "q"){
 	$input = 'q';
 }
 
-# MORE OF YOUR CODE HERE....
+
+
+##########################################################################
+#
+#  FUNCTIONS
+#
+##########################################################################
+
+#
+# function for detecting if a character matches the list of 'stop' words
+#
+sub matchesAny {
+	my $str = $_[0];
+
+	foreach $term $_[1] {
+		if(matches($str, $term)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+#
+# function for determining if the string matches the specified match
+#
+sub matches {
+	my $str = $_[0];
+	my $match = @_[1];
+
+	return $str =~ m/^$match$/;
+}
