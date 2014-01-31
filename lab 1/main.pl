@@ -46,13 +46,13 @@ while($line = <INFILE>) {
 		#Make lower case
 		$token =~ s/(.*)/lc($1)/e;
 
-		print "$token";
+		#print "$token";
 
 		push(@songs, $token);
 	}
 }
 
-print "\n\n";
+#print "\n\n";
 
 # Close the file handle
 close INFILE; 
@@ -62,8 +62,8 @@ close INFILE;
 
 
 %bigram;
-foreach $title (@songs) {
-	@name_split = split(" ", $title);
+foreach (@songs) {
+	@name_split = split(" ", $_);
 	$first = "";
 	foreach $second (@name_split) {
 		if ($first ne "") {
@@ -73,7 +73,23 @@ foreach $title (@songs) {
 	}
 }
 
+sub mcw {
+	my $word = @_[0];
+	my %bigram = %{@_[1]};
+	$best = '';
+	$best_val = 0;
+	keys %hash; # reset the internal iterator so a prior each() doesn't affect the loop
+	foreach (keys %bigram) {
+		if ($bigram{$word}{$_} > $best_val) {	
+			$best = $_;
+			$best_val = $bigram{$word}{$_};
+		}
+	}
+	return $best;
+}
 
+$mcw = mcw("sad", \%bigram);
+print "Most common word after happy is $mcw \n";
 print "File parsed. Bigram model built.\n\n";
 
 
