@@ -92,6 +92,9 @@ while ($input ne "q"){
 	for (my $i = 0; $i<20; $i++) {
 		@title[$i] = $current;
 		$current = mcw($current);
+		#if (contains($current, @title) == 1) { #this is if you want to avoid repeats of the same words in song titles, prevents cycles.
+		#	last;
+		#}
 		if ($current eq '') {
 			last;
 		}
@@ -117,7 +120,6 @@ while ($input ne "q"){
 #
 sub matchesAny {
 	my $str = $_[0];
-
 	foreach $term ('a', 'an', 'and', 'by', 'for', 'from', 'in', 'of', 'on', 'or', 'out', 'the', 'to', 'with') {
 		if(matches($str, $term)) {
 			return true;
@@ -125,6 +127,21 @@ sub matchesAny {
 	}
 
 	return false;
+}
+
+#
+#function for determing if a value is inside a given array.
+#Not currently used, only used for preventing cycles, which was not required but implemented anyway, see above to allow this.
+#
+sub contains {
+	my $str = @_[0];
+	my $length = @_;
+	for (my $i = 1; $i < $length; $i++) {
+		if (@_[$i] eq $str) {
+			return 1;
+		}
+	}
+	return 0;
 }
 
 #
@@ -147,11 +164,12 @@ sub mcw {
 	keys %hash; # reset the internal iterator so a prior each() doesn't affect the loop
 	foreach (keys %bigram) {
 		$tie_breaker = rand();
-		if (($bigram{$word}{$_} > $best_val) || ($bigram{$word}{$_} == $best_val && $tie_breaker > .5 && $best_val != 0)) {	
+		if (($bigram{$word}{$_} > $best_val) || ($bigram{$word}{$_} == $best_val && $tie_breaker > .5 && $bigram{$word}{$_} != 0)) {	
 			$best = $_;
 			$best_val = $bigram{$word}{$_};
 		}
 	}
 	return $best;
 }
+
 
