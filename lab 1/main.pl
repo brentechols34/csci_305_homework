@@ -34,15 +34,16 @@ while($line = <INFILE>) {
 	$token =~ s/(.*<SEP>)//e;
 
 	#get rid of extra annotations on the last part
-	$token =~ s/\[.*\]|\(.*\)//e;
-	$token =~ s/([\(\[{\\\/\_\-\:\"‘+=\*]|feat\.).*$//e;
-
+	#$token =~ s/[\[|\(].*//e;
+	$token =~ s/([\(\[\{\\\-\/\+\*_:"`=]|feat\.).*//g;
 
 	#eliminate punctuation
-	$token =~ s/[^\w\s]//g;
+	$token =~ s/[\$\.\|\?\@¿!¡;&%#]//g;
+
+	chomp($token);
 
 	#eliminate non english songs
-	if($token =~ m/^([A-Z]|[a-z]|[0-9]| )+$/) {
+	if($token =~ m/^(\w|\s|')+$/) {
 		
 
 		#Make lower case
@@ -58,6 +59,8 @@ while($line = <INFILE>) {
 		push(@songs, $token);
 	}
 }
+
+print scalar @songs;
 
 #print "\n\n";
 
@@ -92,9 +95,9 @@ while ($input ne "q"){
 	for (my $i = 0; $i<20; $i++) {
 		@title[$i] = $current;
 		$current = mcw($current);
-		#if (contains($current, @title) == 1) { #this is if you want to avoid repeats of the same words in song titles, prevents cycles.
-		#	last;
-		#}
+#		if (contains($current, @title) == 1) { #this is if you want to avoid repeats of the same words in song titles, prevents cycles.
+#			last;
+#		}
 		if ($current eq '') {
 			last;
 		}
