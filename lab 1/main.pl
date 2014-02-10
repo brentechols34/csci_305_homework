@@ -60,8 +60,6 @@ while($line = <INFILE>) {
 	}
 }
 
-print scalar @songs;
-
 #print "\n\n";
 
 # Close the file handle
@@ -73,7 +71,7 @@ close INFILE;
 
 %bigram;
 foreach (@songs) {
-	@name_split = split(/ /, $_);
+	@name_split = split(/\s/, $_);
 	$first = "";
 	$arr_length = scalar @name_split;
 	for (my $i = 1; $i < $arr_length; $i++) {
@@ -90,20 +88,14 @@ $input = <STDIN>;
 chomp($input);
 while ($input ne "q"){
 	# Replace these lines with some useful code
-	my @title = ();
-	my $current = $input;
-	for (my $i = 0; $i<20; $i++) {
-		@title[$i] = $current;
-		$current = mcw($current);
-#		if (contains($current, @title) == 1) { #this is if you want to avoid repeats of the same words in song titles, prevents cycles.
-#			last;
-#		}
-		if ($current eq '') {
-			last;
-		}
-	}
-	foreach $word (@title) {
-		print $word." ";
+	my @title = (); #title array
+	my $current = $input; #current word in title
+	$i = 0;
+	while (contains($current, @title) != 1 && $current ne '') { #naming loop, break if there is no next word, or the word has already been added
+		@title[$i] = $current; #put current word into array
+		$i++;
+		print $current." "; #print word
+		$current = mcw($current); #find next word
 	}
 	print "\n";
 	print "Enter a word [Enter 'q' to quit]: ";
@@ -141,10 +133,10 @@ sub contains {
 	my $length = @_;
 	for (my $i = 1; $i < $length; $i++) {
 		if (@_[$i] eq $str) {
-			return 1;
+			return 1; #is contained
 		}
 	}
-	return 0;
+	return 0; #is not contained
 }
 
 #
@@ -164,12 +156,12 @@ sub mcw {
 	my $word = @_[0];
 	$best = '';
 	$best_val = 0;
-	keys %hash; # reset the internal iterator so a prior each() doesn't affect the loop
-	foreach (keys %bigram) {
-		$tie_breaker = rand();
-		if (($bigram{$word}{$_} > $best_val) || ($bigram{$word}{$_} == $best_val && $tie_breaker > .5 && $bigram{$word}{$_} != 0)) {	
+	foreach (keys(%{$bigram{$word}})) { #Took me forever the figure out proper type casting in perl. Iterates over the keys of the inputted word
+		$tie_breaker = rand(); #to break ties
+		my $val = $bigram{$word}{$_};
+		if (($val > $best_val) || ($val == $best_val && $tie_breaker > .5 && $val != 0)) { #finding most common
 			$best = $_;
-			$best_val = $bigram{$word}{$_};
+			$best_val = $val;
 		}
 	}
 	return $best;
